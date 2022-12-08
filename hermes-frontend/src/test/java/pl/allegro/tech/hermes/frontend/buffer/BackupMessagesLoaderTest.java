@@ -27,11 +27,11 @@ import pl.allegro.tech.hermes.tracker.frontend.Trackers;
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static java.time.ZoneOffset.UTC;
-import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -228,6 +228,7 @@ public class BackupMessagesLoaderTest {
         assertThat(sendMessage.getData()).isEqualTo(backupMessages.get(0).getData());
         assertThat(sendMessage.getId()).isEqualTo(backupMessages.get(0).getMessageId());
         assertThat(sendMessage.getTimestamp()).isEqualTo(backupMessages.get(0).getTimestamp());
+        assertThat(sendMessage.getHTTPHeaders().get("propagated-http-header")).isEqualTo("example-value");
     }
 
     private Message messageOfAge(int ageHours) {
@@ -236,7 +237,7 @@ public class BackupMessagesLoaderTest {
                 "{'a':'b'}".getBytes(),
                 now().minusHours(ageHours).toInstant(UTC).toEpochMilli(),
                 "partition-key",
-                emptyMap()
+                Map.of("propagated-http-header", "example-value")
         );
     }
 }
