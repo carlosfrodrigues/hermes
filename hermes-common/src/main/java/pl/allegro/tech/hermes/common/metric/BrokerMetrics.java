@@ -12,10 +12,11 @@ public class BrokerMetrics {
         this.meterRegistry = meterRegistry;
     }
 
-    public void registerBrokerLatency(String broker, Duration duration) {
+    public void recordBrokerLatency(String broker, Duration duration) {
         Timer.builder("broker.latency")
                 .tag("broker", broker)
                 .publishPercentileHistogram()
+                .maximumExpectedValue(Duration.ofSeconds(5))
                 .register(meterRegistry)
                 .record(duration);
     }

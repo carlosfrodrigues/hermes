@@ -4,27 +4,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
 
-@ConfigurationProperties(prefix = "frontend.broker-latency.reporter")
+@ConfigurationProperties(prefix = "frontend.broker-latency-reporter")
 public class BrokerLatencyReporterProperties {
-    private boolean perBrokerLatencyReportingEnabled;
-    private Duration kafkaPartitionLeaderRefreshInterval = Duration.ofMinutes(5);
+    private boolean enabled;
     private Duration slowResponseLoggingThreshold = Duration.ofMillis(100);
 
 
-    public boolean isPerBrokerLatencyReportingEnabled() {
-        return perBrokerLatencyReportingEnabled;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setPerBrokerLatencyReportingEnabled(boolean perBrokerLatencyReportingEnabled) {
-        this.perBrokerLatencyReportingEnabled = perBrokerLatencyReportingEnabled;
-    }
-
-    public Duration getKafkaPartitionLeaderRefreshInterval() {
-        return kafkaPartitionLeaderRefreshInterval;
-    }
-
-    public void setKafkaPartitionLeaderRefreshInterval(Duration kafkaPartitionLeaderRefreshInterval) {
-        this.kafkaPartitionLeaderRefreshInterval = kafkaPartitionLeaderRefreshInterval;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Duration getSlowResponseLoggingThreshold() {
