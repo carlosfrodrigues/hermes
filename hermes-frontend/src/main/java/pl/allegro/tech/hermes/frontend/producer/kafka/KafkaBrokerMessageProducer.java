@@ -82,7 +82,11 @@ public class KafkaBrokerMessageProducer implements BrokerMessageProducer {
             String kafkaTopicName = topic.getKafkaTopics().getPrimary().name().asString();
             try {
                 List<PartitionInfo> topicPartitions = producers.get(topic.getTopic()).partitionsFor(kafkaTopicName);
-                Optional<PartitionInfo> partitionInfo = topicPartitions.stream().filter(p -> p.partition() == recordMetadata.partition()).findFirst();
+
+                Optional<PartitionInfo> partitionInfo = topicPartitions.stream()
+                        .filter(p -> p.partition() == recordMetadata.partition())
+                        .findFirst();
+
                 return partitionInfo.map(partition -> partition.leader().host())
                         .map(ProduceMetadata::new)
                         .orElse(ProduceMetadata.empty());

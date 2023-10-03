@@ -16,21 +16,23 @@ public class BrokerLatencyReporter {
 
     private static final Logger logger = LoggerFactory.getLogger(BrokerLatencyReporter.class);
 
-    private final boolean perBrokerLatencyReportingEnabled;
+    private final boolean perBrokerLatencyEnabled;
     private final MetricsFacade metricsFacade;
     private final Duration slowResponseThreshold;
 
-    public BrokerLatencyReporter(boolean perBrokerLatencyReportingEnabled,
+    public BrokerLatencyReporter(boolean perBrokerLatencyEnabled,
                                  MetricsFacade metricsFacade,
                                  Duration slowResponseThreshold) {
-        this.perBrokerLatencyReportingEnabled = perBrokerLatencyReportingEnabled;
+        this.perBrokerLatencyEnabled = perBrokerLatencyEnabled;
         this.metricsFacade = metricsFacade;
         this.slowResponseThreshold = slowResponseThreshold;
     }
 
     public void report(Message message, @Nullable Supplier<ProduceMetadata> produceMetadata, HermesTimerContext timerContext) {
         Duration duration = timerContext.closeAndGet();
-        if (!perBrokerLatencyReportingEnabled) return;
+        if (!perBrokerLatencyEnabled) {
+            return;
+        }
 
         String broker = Optional.ofNullable(produceMetadata).flatMap(metadata -> metadata.get().getBroker()).orElse("unknown");
 
