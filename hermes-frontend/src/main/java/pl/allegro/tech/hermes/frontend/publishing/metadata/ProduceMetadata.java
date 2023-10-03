@@ -3,17 +3,17 @@ package pl.allegro.tech.hermes.frontend.publishing.metadata;
 import java.util.Optional;
 
 public class ProduceMetadata {
-    private final Optional<String> broker;
+    private final String broker;
 
-    public ProduceMetadata(Optional<String> broker) {
+    public ProduceMetadata(String broker) {
         this.broker = broker;
     }
 
     public Optional<String> getBroker() {
-        return broker;
+        return Optional.ofNullable(broker);
     }
 
     public static ProduceMetadata empty() {
-        return new ProduceMetadata(Optional.empty());
+        return new ProduceMetadata(null);
     }
 }
