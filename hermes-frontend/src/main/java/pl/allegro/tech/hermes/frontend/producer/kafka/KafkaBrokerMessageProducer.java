@@ -83,7 +83,9 @@ public class KafkaBrokerMessageProducer implements BrokerMessageProducer {
             try {
                 List<PartitionInfo> topicPartitions = producers.get(topic.getTopic()).partitionsFor(kafkaTopicName);
                 Optional<PartitionInfo> partitionInfo = topicPartitions.stream().filter(p -> p.partition() == recordMetadata.partition()).findFirst();
-                return partitionInfo.map(p -> new ProduceMetadata(Optional.of(p.leader().host()))).orElse(ProduceMetadata.empty());
+                return partitionInfo.map(partition -> partition.leader().host())
+                        .map(ProduceMetadata::new)
+                        .orElse(ProduceMetadata.empty());
             } catch (InterruptException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {

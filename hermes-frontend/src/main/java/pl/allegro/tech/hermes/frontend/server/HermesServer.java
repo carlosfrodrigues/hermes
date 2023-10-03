@@ -74,7 +74,6 @@ public class HermesServer {
         if (topicMetadataLoadingJobEnabled) {
             topicMetadataLoadingJob.start();
         }
-
         healthCheckService.startup();
         readinessChecker.start();
     }
@@ -102,7 +101,6 @@ public class HermesServer {
         if (topicMetadataLoadingJobEnabled) {
             topicMetadataLoadingJob.stop();
         }
-
         readinessChecker.stop();
     }
 
