@@ -59,7 +59,7 @@ class PublishingHandler implements HttpHandler {
             @Override
             public void onPublished(Message message, Topic topic, Supplier<ProduceMetadata> producerMetadata) {
                 exchange.getConnection().getWorker().execute(() -> {
-                    brokerBrokerLatencyReporter.report(message, producerMetadata, brokerLatencyTimers);
+                    brokerBrokerLatencyReporter.report(brokerLatencyTimers, message, topic.getAck(), producerMetadata);
                     if (messageState.setSentToKafka()) {
                         attachment.removeTimeout();
                         messageEndProcessor.sent(exchange, attachment);
@@ -80,7 +80,7 @@ class PublishingHandler implements HttpHandler {
             @Override
             public void onUnpublished(Message message, Topic topic, Supplier<ProduceMetadata> producerMetadata, Exception exception) {
                 messageState.setErrorInSendingToKafka();
-                brokerBrokerLatencyReporter.report(message, producerMetadata, brokerLatencyTimers);
+                brokerBrokerLatencyReporter.report(brokerLatencyTimers, message, topic.getAck(), producerMetadata);
                 attachment.removeTimeout();
                 handleNotPublishedMessage(exchange, topic, attachment.getMessageId(), exception);
             }

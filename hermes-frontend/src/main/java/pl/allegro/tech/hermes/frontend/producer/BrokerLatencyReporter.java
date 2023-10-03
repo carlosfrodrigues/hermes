@@ -3,6 +3,7 @@ package pl.allegro.tech.hermes.frontend.producer;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.allegro.tech.hermes.api.Topic;
 import pl.allegro.tech.hermes.common.metric.MetricsFacade;
 import pl.allegro.tech.hermes.frontend.publishing.message.Message;
 import pl.allegro.tech.hermes.frontend.publishing.metadata.ProduceMetadata;
@@ -28,7 +29,10 @@ public class BrokerLatencyReporter {
         this.slowResponseThreshold = slowResponseThreshold;
     }
 
-    public void report(Message message, @Nullable Supplier<ProduceMetadata> produceMetadata, HermesTimerContext timerContext) {
+    public void report(HermesTimerContext timerContext,
+                       Message message,
+                       Topic.Ack ack,
+                       @Nullable Supplier<ProduceMetadata> produceMetadata) {
         Duration duration = timerContext.closeAndGet();
         if (!perBrokerLatencyEnabled) {
             return;
@@ -37,8 +41,8 @@ public class BrokerLatencyReporter {
         String broker = Optional.ofNullable(produceMetadata).flatMap(metadata -> metadata.get().getBroker()).orElse("unknown");
 
         if (duration.compareTo(slowResponseThreshold) > 0) {
-            logger.info("Slow produce request, broker response time: {} ms, messageId: {}, broker: {}",
-                    duration.toMillis(), message.getId(), broker);
+            logger.info("Slow produce request, broker response time: {} ms, ackLevel: {}, messageId: {}, broker: {}",
+                    duration.toMillis(), ack, message.getId(), broker);
         }
 
         metricsFacade.broker().recordBrokerLatency(broker, duration);
